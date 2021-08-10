@@ -5,7 +5,7 @@ from IPython import get_ipython
 
 # %%
 import numpy as np
-target="/Users/user/POG/MLKitGazeDataCollectingButton/vision-quickstart/CaptureApp/RGBData/"
+target="/Users/user/POG/MLKitGazeDataCollectingButton/vision-quickstart/CaptureApp/RGBData/train_dataset/"
 
 left_eye_right_top = np.load(target+"left_eye_right_top.npy")
 left_eye_left_bottom = np.load(target+"left_eye_left_bottom.npy")
@@ -46,15 +46,18 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.utils import multi_gpu_model
+# from tensorflow.keras.utils import multi_gpu_model
 import gc
 from pathlib import Path
 
 dropout_rate=0
 resolution = 64
 channels = 1
-target="/special/jbpark/TabS6LData/Joonbeom/train_dataset/"
-model_dir = "/special/jbpark/EvalModel"
+# target="/special/jbpark/TabS6LData/Joonbeom/train_dataset/"
+# target = '/'
+target="/Users/user/POG/MLKitGazeDataCollectingButton/vision-quickstart/CaptureApp/RGBData/train_dataset/"
+
+model_dir = "/Users/user/POG/MLKitGazeDataCollectingButton/GAZEL_MODEL"
 
 def custom_loss(y_true, y_pred): 
     #euclidean loss
@@ -155,6 +158,7 @@ mc = ModelCheckpoint(model_dir+'/checkpoint/gazel_shared_ver.h5', monitor='val_l
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
 #hist = model.fit([left_eye,right_eye, euler, facepos],gaze_point, validation_split=0.1,epochs=epoch, callbacks=[es, mc])
+print(gaze_point.shape)
 hist = model.fit([left_eye, right_eye, euler, facepos, left_eye_size, right_eye_size,],gaze_point, validation_split=0.1,epochs=epoch, callbacks=[es, mc,reduce_lr])
 
 Path(model_dir+'/Lmodels').mkdir(parents=True, exist_ok=True)
@@ -191,7 +195,7 @@ def custom_loss(y_true, y_pred):
     #squared loss
     #return K.sum(K.square(y_pred - y_true), axis=-1) 
 
-model_dir = "/special/jbpark/EvalModel"
+model_dir = "/EvalModel"
 keras_file = model_dir+'/Lmodels/gazel_shared_ver.h5'
 # Convert to TensorFlow Lite model.
 model = load_model(keras_file,custom_objects={'custom_loss': custom_loss})
