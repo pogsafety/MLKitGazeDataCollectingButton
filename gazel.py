@@ -52,7 +52,7 @@ from pathlib import Path
 
 dropout_rate=0
 resolution = 64
-channels = 1
+channels = 3
 # target="/special/jbpark/TabS6LData/Joonbeom/train_dataset/"
 # target = '/'
 target="/Users/user/POG/MLKitGazeDataCollectingButton/vision-quickstart/CaptureApp/RGBData/train_dataset/"
@@ -131,10 +131,11 @@ tf.distribute.MirroredStrategy()
 
 model.compile(loss=custom_loss, optimizer=Adam(lr=1e-3))
 model.summary()
-
 gaze_point = np.load(target+"gaze_point.npy").astype(float)
 left_eye = np.load(target+"left_eye.npy").reshape(-1,resolution,resolution,channels)
 right_eye = np.load(target+"right_eye.npy").reshape(-1,resolution,resolution,channels)
+# left_eye = np.load(target+"left_eye.npy")
+# right_eye = np.load(target+"right_eye.npy")
 euler = np.load(target+"euler.npy").reshape(-1,1,1,3)
 facepos = np.load(target+"facepos.npy").reshape(-1,1,1,2)
 left_eye_right_top = np.load(target+"left_eye_right_top.npy")
